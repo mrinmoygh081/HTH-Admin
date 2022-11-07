@@ -1,0 +1,67 @@
+.sidebar {
+  min-width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: var(--main-bg);
+  box-shadow: var(--box-shadow);
+  overflow-y: scroll;
+}
+.sidebar::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+}
+.sidebar::-webkit-scrollbar-track {
+  background: rgb(196, 196, 196); /* color of the tracking area */
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: rgb(110, 110, 124); /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 1px solid rgb(196, 196, 196); /* creates padding around scroll thumb */
+}
+
+.sidebar__logo {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar__logo > img {
+  height: 45px;
+}
+
+.sidebar__item {
+  padding: 0 20px;
+}
+
+.sidebar__item-inner {
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  transition: color 0.3s ease 0s;
+}
+
+.sidebar__item-inner > i {
+  margin-right: 10px;
+  font-size: 1.5rem;
+}
+
+.sidebar__item-inner > span {
+  text-transform: capitalize;
+}
+
+.sidebar__item-inner:hover {
+  color: var(--main-color);
+}
+
+.sidebar__item-inner.active {
+  border-radius: var(--border-radius);
+  background-image: linear-gradient(
+    to right,
+    var(--main-color),
+    var(--second-color)
+  );
+  color: var(--txt-white);
+}
