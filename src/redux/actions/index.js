@@ -22,3 +22,17 @@ export const logoutFun = () => {
     type: "LOGOUT",
   };
 };
+
+export const loadBookingDataFun = (bookingData) => {
+  return {
+    type: "LOADBOOKINGDATA",
+    bookingLoad: bookingData,
+  };
+};
+
+export const loadcarsDataFun = (carsData) => {
+  return {
+    type: "LOADCARSDATA",
+    carsLoad: carsData,
+  };
+};

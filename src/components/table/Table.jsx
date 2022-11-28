@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 
 import "./table.css";
 
@@ -30,6 +31,10 @@ const Table = (props) => {
 
     setCurrPage(page);
   };
+
+  useEffect(() => {
+    setDataShow(props.bodyData);
+  }, [props?.bodyData]);
 
   return (
     <div>

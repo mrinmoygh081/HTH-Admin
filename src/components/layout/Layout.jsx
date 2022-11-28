@@ -17,13 +17,18 @@ import Agents from "../../pages/Agents";
 import Bookings from "../../pages/Bookings";
 import Cars from "../../pages/Cars";
 import AddCars from "../../pages/AddCars";
+import BookingsDetails from "../../pages/BookingsDetails";
+import CarsDetails from "../../pages/CarsDetails";
+import BookingsDriverAssign from "../../pages/BookingsDriverAssign";
+import Owners from "../../pages/Owners";
+import AddAgents from "../../pages/AddAgents";
+import PaymentCycle from "../../pages/PaymentCycle";
 // import LoadingView from "../LoadingView";
 
 const Layout = () => {
   const { loginToken } = useSelector((state) => state.authReducer);
-  const loadingReducer = useSelector((state) => state.loadingReducer);
+  // const loadingReducer = useSelector((state) => state.loadingReducer);
 
-  console.log(loadingReducer);
   // if (loadingReducer) {
   //   return <LoadingView />;
   // }
@@ -44,9 +49,18 @@ const Layout = () => {
                 <Route path="settings" element={<Settings />} />
                 <Route path="drivers" element={<Drivers />} />
                 <Route path="agents" element={<Agents />} />
+                <Route path="add-agent" element={<AddAgents />} />
                 <Route path="bookings" element={<Bookings />} />
+                <Route path="bookingsDetails" element={<BookingsDetails />} />
+                <Route
+                  path="driver-assign"
+                  element={<BookingsDriverAssign />}
+                />
                 <Route path="cars" element={<Cars />} />
+                <Route path="carsDetails" element={<CarsDetails />} />
                 <Route path="add-cars" element={<AddCars />} />
+                <Route path="owners" element={<Owners />} />
+                <Route path="payments" element={<PaymentCycle />} />
               </Routes>
             </div>
           </div>

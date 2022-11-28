@@ -13,11 +13,12 @@ const tableHead = [
   "Registration No",
   "Name",
   "Phone",
+  "Address",
+  "Bank Account",
+  "IFSC Code",
+  "Payment Due",
   "Password",
-  "Availability",
-  "Car Model",
-  "Permit",
-  "Actions(Add/Edit/Deactivated)",
+  "Actions",
 ];
 const renderHead = (item, index) => <th key={index}>{item}</th>;
 
@@ -40,10 +41,10 @@ const renderBody = (item, index) => (
   </tr>
 );
 
-const Drivers = () => {
+const Owners = () => {
   return (
     <section>
-      <h2 className="page-header">Drivers</h2>
+      <h2 className="page-header">Cab Owners</h2>
       <div className="row">
         <div className="col-12">
           <div className="card">
@@ -55,7 +56,7 @@ const Drivers = () => {
                 </div>
                 <div className="topnav__action">
                   <Link to="/add-cars" className="submit-button">
-                    ADD NEW DRIVER
+                    ADD NEW OWNER
                   </Link>
                 </div>
               </div>
@@ -78,4 +79,4 @@ const Drivers = () => {
   );
 };
 
-export default Drivers;
+export default Owners;
