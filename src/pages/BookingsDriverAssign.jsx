@@ -32,7 +32,8 @@ const renderBody = (item, index) => (
     <td>Manipur, Asham </td>
     <td className="actionTable">
       <button title="Assign the Car">
-        <i className="bx bx-check-square"></i>
+        {/* <i className="bx bx-check-square"></i> */}
+        <i> Assign</i>
       </button>
     </td>
   </tr>
@@ -41,6 +42,9 @@ const renderBody = (item, index) => (
 const BookingsDriverAssign = () => {
   // const [driver, setDriver] = useState(null);
   const carsData = useSelector((state) => state.carsReducer);
+  // const availableCars = carsData.filter(
+  //   (item) => item.availability.status === 0
+  // );
   return (
     <section>
       <h2 className="page-header">

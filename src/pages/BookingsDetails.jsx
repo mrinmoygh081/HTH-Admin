@@ -1,16 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { loadSingleBookingDataFun } from "../redux/actions";
+import { bookingSingle } from "../apis";
 
 const BookingsDetails = () => {
+  const dispatch = useDispatch();
+  const { loginToken } = useSelector((state) => state.authReducer);
   //   const params = useParams(); // for paramater pass like /bookings/:id
   const { state } = useLocation(); // get passing data from Link
-  console.log(state);
+
+  useEffect(() => {
+    const random = async () => {
+      const data = await bookingSingle(state, loginToken);
+      dispatch(loadSingleBookingDataFun(data));
+    };
+    random();
+  }, [state, loginToken, dispatch]);
+
+  const singleBooking = useSelector(
+    (state) => state.bookingSingleReducer.message
+  );
+  const book = singleBooking.bookingDetails;
+  const driverPay = singleBooking.driverPayment;
 
   return (
     <div>
-      {state ? (
+      {singleBooking ? (
         <>
-          <h2 className="page-header">{state.pnrno}</h2>
+          <h2 className="page-header">{book.pnrno}</h2>
           <div className="row">
             {/* Booking Details */}
             <div className="col-md-7 col-12">
@@ -24,33 +42,45 @@ const BookingsDetails = () => {
                       <tr>
                         <td>Booking Date</td>
                         <td>
-                          {new Date(state.bookingDate).getDate()}/
-                          {new Date(state.bookingDate).getMonth()}/
-                          {new Date(state.bookingDate).getFullYear()}
+                          {new Date(book.bookingDate).getDate()}/
+                          {new Date(book.bookingDate).getMonth()}/
+                          {new Date(book.bookingDate).getFullYear()}
                         </td>
                       </tr>
                       <tr>
                         <td>Reporting Time</td>
-                        <td>{state.pickupTime}</td>
+                        <td>{book.pickupTime}</td>
                       </tr>
                       <tr>
                         <td>Reporting Place</td>
-                        <td>{state.travelerInfo.pickupLocation}</td>
+                        <td>{book.travelerInfo.pickupLocation}</td>
+                      </tr>
+                      <tr>
+                        <td>Car Quantity</td>
+                        <td>{book.carQuantity}</td>
                       </tr>
                       <tr>
                         <td>Booked For Days</td>
-                        <td>{state.totalDays}</td>
+                        <td>{book.totalDays}</td>
                       </tr>
                       <tr>
                         <td>Travel Status</td>
-                        <td>{state.travelStatus ? "Completed" : "Pending"}</td>
+                        <td>{book.travelStatus ? "Completed" : "Pending"}</td>
+                      </tr>
+                      <tr>
+                        <td>Arrival Status</td>
+                        <td>
+                          {book.arrived.arrivedStatus
+                            ? "Arrived"
+                            : "Not arrived yet"}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            {/* Traveller Info  */}
+            {/* Traveller & Tour Agent Info  */}
             <div className="col-md-5 col-12">
               <div className="card">
                 <div className="card__header">
@@ -61,54 +91,105 @@ const BookingsDetails = () => {
                     <tbody>
                       <tr>
                         <td>Name</td>
-                        <td>{state.travelerInfo.travelerName}</td>
+                        <td>{book.travelerInfo.travelerName}</td>
                       </tr>
                       <tr>
                         <td>Mobile</td>
-                        <td>{state.travelerInfo.travelerMobile}</td>
+                        <td>{book.travelerInfo.travelerMobile}</td>
                       </tr>
                       <tr>
                         <td>Alternative Mobile</td>
-                        <td>{state.travelerInfo.travelerAltMobile}</td>
+                        <td>{book.travelerInfo.travelerAltMobile}</td>
                       </tr>
                       <tr>
                         <td>Email</td>
-                        <td>{state.travelerInfo.travelerEmail}</td>
+                        <td>{book.travelerInfo.travelerEmail}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="card__header">
+                  <h3>Tour Agent Details</h3>
+                </div>
+                <div className="card__body">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>Name</td>
+                        <td>{book.userId.name}</td>
+                      </tr>
+                      <tr>
+                        <td>Mobile</td>
+                        <td>{book.userId.phone}</td>
+                      </tr>
+                      <tr>
+                        <td>Email</td>
+                        <td>{book.userId.email}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            {/* Driver Details  */}
+            {/* Tour, Car & Driver Details  */}
             <div className="col-md-5 col-12">
               <div className="card">
+                {/* Car Details  */}
                 <div className="card__header">
-                  <h3>Car & Driver Details</h3>
+                  <h3>Car Details</h3>
                 </div>
                 <div className="card__body">
                   <table>
                     <tbody>
                       <tr>
-                        <td>Driver Name</td>
-                        <td>{}</td>
+                        <td>Name</td>
+                        <td>{book.car.carName}</td>
+                      </tr>
+                      <tr>
+                        <td>Model</td>
+                        <td>{book.car.carModel}</td>
+                      </tr>
+                      <tr>
+                        <td>Availability</td>
+                        <td>
+                          {book.car.availability
+                            ? "Available"
+                            : "Not Available"}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                {/* Driver Details  */}
+                <div className="card__header">
+                  <h3>Driver Details</h3>
+                </div>
+                <div className="card__body">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>Name</td>
+                        <td>{book.driver.driverName}</td>
                       </tr>
                       <tr>
                         <td>Phone</td>
-                        <td>{}</td>
+                        <td>{book.driver.driverMobile}</td>
                       </tr>
                       <tr>
-                        <td>Car Model</td>
-                        <td>{state.carModel}</td>
+                        <td>Address</td>
+                        <td>{book.driver.driverAddress}</td>
                       </tr>
                       <tr>
-                        <td>Car Quantity</td>
-                        <td>{state.carQuantity}</td>
+                        <td>Status</td>
+                        <td>
+                          {book.driver.driverStatus ? "Active" : "Not Active"}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
+              {/* Tour Details */}
               <div className="card">
                 <div className="card__header">
                   <h3>Tour Details</h3>
@@ -121,7 +202,7 @@ const BookingsDetails = () => {
                         <td>Dropoff</td>
                         <td>Booked For Days</td>
                       </tr>
-                      {state.travelInfo.map((it, index) => {
+                      {book.travelInfo.map((it, index) => {
                         return (
                           <tr key={index}>
                             <td>{it.start}</td>
@@ -146,15 +227,15 @@ const BookingsDetails = () => {
                     <tbody>
                       <tr>
                         <td>Total Price</td>
-                        <td>{state.price}</td>
+                        <td>{book.price}</td>
                       </tr>
                       <tr>
                         <td>Agent Markup</td>
-                        <td>{state.markup}</td>
+                        <td>{book.markup}</td>
                       </tr>
                       <tr>
                         <td>Due Amount</td>
-                        <td>{state.dueAmount}</td>
+                        <td>{book.dueAmount}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -169,7 +250,7 @@ const BookingsDetails = () => {
                         <td>Amount</td>
                         <td>Taken By</td>
                       </tr>
-                      {state.payment.map((it, index) => {
+                      {book.payment.map((it, index) => {
                         return (
                           <tr key={index}>
                             <td>
@@ -187,9 +268,49 @@ const BookingsDetails = () => {
                   </table>
                 </div>
               </div>
+              <div className="card">
+                <div className="card__header">
+                  <h3>Driver Payment Details</h3>
+                </div>
+                <div className="card__body">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>Due Amount</td>
+                        <td>{driverPay.dueAmount}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="card__footer">
+                  <h3>Payment Cycle</h3>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>Date</td>
+                        <td>Payment Id</td>
+                        <td>Amount</td>
+                        <td>Payment Mode</td>
+                      </tr>
+                      {driverPay.payment.map((it, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>
+                              {new Date(it.date).getDate()}/
+                              {new Date(it.date).getMonth()}/
+                              {new Date(it.date).getFullYear()}
+                            </td>
+                            <td>{it._id}</td>
+                            <td>&#8377; {it.amount}</td>
+                            <td>{it.paymentMood}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            {/* Tour Details */}
-            <div className="col-md-5 col-12"></div>
           </div>
         </>
       ) : (

@@ -29,7 +29,12 @@ export const loadBookingDataFun = (bookingData) => {
     bookingLoad: bookingData,
   };
 };
-
+export const loadSingleBookingDataFun = (bookingData) => {
+  return {
+    type: "LOADSINGLEBOOKINGDATA",
+    bookingLoad: bookingData,
+  };
+};
 export const loadcarsDataFun = (carsData) => {
   return {
     type: "LOADCARSDATA",

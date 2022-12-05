@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import CreatableSelect from "react-select/creatable";
-import makeAnimated from "react-select/animated";
+// import CreatableSelect from "react-select/creatable";
+// import makeAnimated from "react-select/animated";
 
 import Table from "../components/table/Table";
 import { BASE_URL } from "../config";
@@ -10,12 +10,12 @@ import { BASE_URL } from "../config";
 import LoadingView from "../components/LoadingView";
 import { loadBookingDataFun } from "../redux/actions";
 
-const filterOptions = [
-  { value: "All Bookings", label: "All Bookings" },
-  { value: "New Bookings", label: "New Bookings" },
-  { value: "Current Bookings", label: "Current Bookings" },
-  { value: "Previous Bookings", label: "Previous Bookings" },
-];
+// const filterOptions = [
+//   { value: "All Bookings", label: "All Bookings" },
+//   { value: "New Bookings", label: "New Bookings" },
+//   { value: "Current Bookings", label: "Current Bookings" },
+//   { value: "Previous Bookings", label: "Previous Bookings" },
+// ];
 
 const tableHead = [
   "PNR NO",
@@ -33,7 +33,7 @@ const renderHead = (item, index) => <th key={index}>{item}</th>;
 const renderBody = (item, index) => (
   <tr key={index}>
     <td>
-      <Link to={`/bookingsDetails`} state={item} className="under_hover">
+      <Link to={`/bookingsDetails`} state={item.id} className="under_hover">
         {item.pnrno}
       </Link>
     </td>
@@ -61,29 +61,23 @@ const renderBody = (item, index) => (
   </tr>
 );
 const Bookings = () => {
-  const animatedComponents = makeAnimated();
+  // const animatedComponents = makeAnimated();
   const dispatch = useDispatch();
   const { loginToken } = useSelector((state) => state.authReducer);
   const bookingsData = useSelector((state) => state.bookingReducer);
   const [searchedVal, setSearchedVal] = useState("");
   const [searchedData, setSearchedData] = useState(bookingsData);
 
-  // const [bookingsData, setBookingsData] = useState(null);
-
-  // useEffect(() => {
-  //   console.log(bookingsData);
-  // }, [bookingsData]);
-
   useEffect(() => {
     let searched = bookingsData.filter((row) => {
-      console.log(
-        searchedVal.toString().toLowerCase(),
-        row.pnrno.toString().toLowerCase(),
-        row.pnrno
-          .toString()
-          .toLowerCase()
-          .includes(searchedVal.toString().toLowerCase())
-      );
+      // console.log(
+      //   searchedVal.toString().toLowerCase(),
+      //   row.pnrno.toString().toLowerCase(),
+      //   row.pnrno
+      //     .toString()
+      //     .toLowerCase()
+      //     .includes(searchedVal.toString().toLowerCase())
+      // );
       return row.pnrno
         .toString()
         .toLowerCase()
@@ -91,7 +85,7 @@ const Bookings = () => {
     });
     setSearchedData(searched);
   }, [searchedVal, bookingsData]);
-  console.log(searchedData);
+  // console.log(searchedData);
 
   useEffect(() => {
     var myHeaders = new Headers();
@@ -106,7 +100,6 @@ const Bookings = () => {
     fetch(`${BASE_URL}/admin/booking`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        // setBookingsData(result.message);
         dispatch(loadBookingDataFun(result.message));
       })
       .catch((error) => console.log("error", error));
@@ -120,7 +113,7 @@ const Bookings = () => {
           <div className="card">
             <div className="card__body">
               <div className="topnav">
-                <div>
+                {/* <div>
                   <CreatableSelect
                     options={filterOptions}
                     defaultValue={{
@@ -141,7 +134,7 @@ const Bookings = () => {
                       });
                     }}
                   />
-                </div>
+                </div> */}
                 <div className="topnav__search">
                   <input
                     type="text"
