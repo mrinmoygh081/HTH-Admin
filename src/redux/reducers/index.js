@@ -3,6 +3,8 @@ import loadingReducer from "./loadingReducer";
 import bookingReducer from "./bookingReducer";
 import bookingSingleReducer from "./bookingSingleReducer";
 import carsReducer from "./carsReducer";
+import availableCarsReducer from "./availableCarsReducer";
+import getPlacePriceReducer from "./getPlacePriceReducer";
 
 import { combineReducers } from "redux";
 
@@ -12,6 +14,8 @@ const rootReducer = combineReducers({
   bookingReducer,
   carsReducer,
   bookingSingleReducer,
+  availableCarsReducer,
+  getPlacePriceReducer,
 });
 
 export default rootReducer;

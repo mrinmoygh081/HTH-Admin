@@ -23,6 +23,10 @@ import BookingsDriverAssign from "../../pages/BookingsDriverAssign";
 import Owners from "../../pages/Owners";
 import AddAgents from "../../pages/AddAgents";
 import PaymentCycle from "../../pages/PaymentCycle";
+import AddPlacePrice from "../../pages/AddPlacePrice";
+import AddPlacePriceFrom from "../../pages/AddPlacePriceFrom";
+import AddBooking from "../../pages/AddBooking";
+import EditBooking from "../../pages/EditBooking";
 // import LoadingView from "../LoadingView";
 
 const Layout = () => {
@@ -46,14 +50,16 @@ const Layout = () => {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="settings" element={<Settings />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="drivers" element={<Drivers />} />
                 <Route path="agents" element={<Agents />} />
                 <Route path="add-agent" element={<AddAgents />} />
                 <Route path="bookings" element={<Bookings />} />
+                <Route path="/add-booking" element={<AddBooking />} />
+                <Route path="/edit-booking/:pnr" element={<EditBooking />} />
                 <Route path="bookingsDetails" element={<BookingsDetails />} />
                 <Route
-                  path="driver-assign"
+                  path="/driver-assign/:pnr"
                   element={<BookingsDriverAssign />}
                 />
                 <Route path="cars" element={<Cars />} />
@@ -61,6 +67,11 @@ const Layout = () => {
                 <Route path="add-cars" element={<AddCars />} />
                 <Route path="owners" element={<Owners />} />
                 <Route path="payments" element={<PaymentCycle />} />
+                <Route path="/add-place-price" element={<AddPlacePrice />} />
+                <Route
+                  path="/add-place-price-form"
+                  element={<AddPlacePriceFrom />}
+                />
               </Routes>
             </div>
           </div>

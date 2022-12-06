@@ -1,107 +1,126 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { Fragment, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import Table from "../components/table/Table";
 import LoadingView from "../components/LoadingView";
-// import { BASE_URL } from "../config";
+import { getAPI, postAPI } from "../apis";
+import {
+  availableCarsToAssign,
+  loadingEnd,
+  loadingStart,
+} from "../redux/actions";
+import { BASE_URL } from "../config";
+import { useLocation, useParams } from "react-router-dom";
 
-// import CreatableSelect from "react-select/creatable";
-// import makeAnimated from "react-select/animated";
-
-const tableHead = [
-  "Registration No",
-  "Car Model",
-  "Driver Phone",
-  "Availability",
-  "Permit",
-  "Assign",
-];
+const tableHead = ["Car Number", "Car Model", "Driver", "Permit", "Assign"];
 const renderHead = (item, index) => <th key={index}>{item}</th>;
 
-const renderBody = (item, index) => (
-  <tr key={index}>
-    <td>
-      <Link to={`/carsDetails`} state={item} className="under_hover">
-        123456789
-      </Link>
-    </td>
-    <td>{item.carName}</td>
-    <td>8240491818</td>
-    <td>Available</td>
-    <td>Manipur, Asham </td>
-    <td className="actionTable">
-      <button title="Assign the Car">
-        {/* <i className="bx bx-check-square"></i> */}
-        <i> Assign</i>
-      </button>
-    </td>
-  </tr>
-);
+const RenderBody = (item, index) => {
+  const { loginToken } = useSelector((state) => state.authReducer);
+  const { pnr } = useParams();
+  const { state } = useLocation();
+
+  console.log(state);
+  const driverAssignBtn = async (carId) => {
+    let requestOptions = JSON.stringify({
+      pnrno: pnr,
+      totalPrice: "25000",
+      amount: "5000",
+      carId: carId,
+      date: "2022-11-12T16:30:11.643Z",
+      paymentMood: "cash",
+    });
+
+    const url = `${BASE_URL}/admin/assignDriver`;
+
+    let res = await postAPI(requestOptions, url, loginToken);
+    console.log(res);
+    if (res.status === 1) {
+      alert("Booking done");
+    } else {
+      alert(res.message);
+    }
+  };
+
+  return (
+    <tr key={index}>
+      <td>{item.registration[0].CarNumber}</td>
+      <td>
+        {item.carName}({item.carModel})
+      </td>
+      <td>
+        {item.driver.driverName}({item.driver.driverMobile})
+      </td>
+      <td>
+        {item.permit.map((item, ind) => {
+          return (
+            <Fragment key={ind}>
+              <span>{item}, </span>
+            </Fragment>
+          );
+        })}
+      </td>
+      <td className="actionTable">
+        <button onClick={() => driverAssignBtn(item.id)} title="Assign the Car">
+          <i>Assign</i>
+        </button>
+      </td>
+    </tr>
+  );
+};
 
 const BookingsDriverAssign = () => {
-  // const [driver, setDriver] = useState(null);
-  const carsData = useSelector((state) => state.carsReducer);
-  // const availableCars = carsData.filter(
-  //   (item) => item.availability.status === 0
-  // );
+  const dispatch = useDispatch();
+  const { pnr } = useParams();
+  const { loginToken } = useSelector((state) => state.authReducer);
+  const availableCars = useSelector(
+    (state) => state.availableCarsReducer?.message
+  );
+
+  useEffect(() => {
+    (async () => {
+      dispatch(loadingStart());
+      let url = `${BASE_URL}/admin/carList/`;
+      const data = await getAPI(url, loginToken);
+      dispatch(availableCarsToAssign(data));
+      dispatch(loadingEnd());
+    })();
+  }, [loginToken, dispatch]);
+
   return (
-    <section>
-      <h2 className="page-header">
-        Assign New Driver for <span>(Reg No)</span>
-      </h2>
-      <div className="row">
-        {/* <div className="col-md-6 col-12">
-          <div className="card">
-            <div className="card__header">
-              <h3>Owner Info</h3>
-            </div>
-            <div className="card__body">
-              <table>
-                <tbody>
-                  <tr>
-                    <td>Name</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Mobile</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Address</td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div> */}
-        <div className="col-12">
-          <div className="card">
-            <div className="card__body">
-              <div className="topnav">
-                <div></div>
-                <div className="topnav__search">
-                  <input type="text" placeholder="Search here..." />
-                  <i className="bx bx-search"></i>
+    <>
+      <section>
+        <h2 className="page-header">
+          Assign New Driver for <span>{pnr}</span>
+        </h2>
+        <div className="row">
+          <div className="col-12">
+            <div className="card">
+              <div className="card__body">
+                <div className="topnav">
+                  <div></div>
+                  <div className="topnav__search">
+                    <input type="text" placeholder="Search here..." />
+                    <i className="bx bx-search"></i>
+                  </div>
                 </div>
+                {!availableCars ? (
+                  <LoadingView />
+                ) : (
+                  <Table
+                    limit="10"
+                    headData={tableHead}
+                    renderHead={(item, index) => renderHead(item, index)}
+                    bodyData={availableCars}
+                    renderBody={(item, index) => RenderBody(item, index)}
+                  />
+                )}
               </div>
-              {!true ? (
-                <LoadingView />
-              ) : (
-                <Table
-                  limit="10"
-                  headData={tableHead}
-                  renderHead={(item, index) => renderHead(item, index)}
-                  bodyData={carsData}
-                  renderBody={(item, index) => renderBody(item, index)}
-                />
-              )}
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

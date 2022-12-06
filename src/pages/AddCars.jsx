@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import CreatableSelect from "react-select/creatable";
 import makeAnimated from "react-select/animated";
+import { BASE_URL } from "../config";
+import { useSelector } from "react-redux";
+import { postAPI } from "../apis";
 
 const statesOptions = [
   { value: "arunachal pradesh", label: "Arunachal Pradesh" },
@@ -12,13 +15,19 @@ const statesOptions = [
   { value: "nagaland", label: "Nagaland" },
   { value: "tripura", label: "Tripura" },
 ];
+const docsOptions = [
+  { value: "driving-licence", label: "Driving Licence" },
+  { value: "rc", label: "RC" },
+  { value: "insurance", label: "Car Insurance" },
+  { value: "permit", label: "Permit" },
+];
 
 const AddCars = () => {
+  const { loginToken } = useSelector((state) => state.authReducer);
   const animatedComponents = makeAnimated();
   const [carData, setCarData] = useState({
     driverPhoto:
       "ic-man-sitting-in-the-driving-seat-of-the-car-and-looking-back-.jpg?ver=6",
-    documentNames: [],
     documentFile: "http://www.africau.edu/images/default/sample.pdf",
     startDate: "2021-06-19",
     endDate: "2021-07-19",
@@ -29,11 +38,27 @@ const AddCars = () => {
     console.log(JSON.stringify(carData));
   }, [carData]);
 
+  const addCarBtn = async () => {
+    let requestOptions = JSON.stringify(carData);
+
+    const url = `${BASE_URL}/admin/add-car-details`;
+
+    let res = await postAPI(requestOptions, url, loginToken);
+    console.log(res);
+    if (res?.status === 1) {
+      alert("Car added successfully.");
+    } else {
+      alert(res?.message);
+    }
+  };
+
   return (
     <>
       <section>
         <div className="container-fluid">
-          <h2 className="page-header text-center">ADD NEW CAR</h2>
+          <h2 className="page-header text-center">
+            Add Car with Driver and Owner
+          </h2>
           <form id="survey-form">
             <div className="row">
               {/* car details  */}
@@ -238,17 +263,6 @@ const AddCars = () => {
                     <option value="community">Community</option>
                     <option value="openSource">Open Source</option>
                   </select>
-                </div>
-
-                <div className="form-group">
-                  <p>Any comments or suggestions?</p>
-                  <textarea
-                    id="comments"
-                    className="input-textarea"
-                    name="comment"
-                    placeholder="Enter your comment here..."
-                    defaultValue={""}
-                  />
                 </div> */}
               </div>
               {/* owner details */}
@@ -289,17 +303,6 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <p>Owner ID Proof</p>
-                  <input
-                    type="file"
-                    name="owner_id"
-                    id="owner_id"
-                    className="form-control"
-                    placeholder="Enter owner id proof"
-                    required
-                  />
-                </div>
-                <div className="form-group">
                   <label id="owner_bank_account" htmlFor="owner_bank_account">
                     Owner Bank Account
                   </label>
@@ -332,7 +335,6 @@ const AddCars = () => {
                     className="input-textarea"
                     name="owner_address"
                     placeholder="Enter your owner address here..."
-                    defaultValue={""}
                     value={carData.ownerAddress}
                     onChange={(e) => {
                       setCarData({ ...carData, ownerAddress: e.target.value });
@@ -362,15 +364,40 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="driver_licence" htmlFor="driver_licence">
-                    Driver Licence
+                  <label id="car_reg_date" htmlFor="car_reg_date">
+                    Documents List
+                  </label>
+                  <CreatableSelect
+                    options={docsOptions}
+                    defaultValue={carData.documentNames}
+                    isMulti
+                    components={animatedComponents}
+                    name="document-names"
+                    isSearchable={true}
+                    isClearable={true}
+                    isDisabled={false}
+                    isLoading={false}
+                    onChange={(res) => {
+                      let arr = [];
+                      res.map((val) => {
+                        arr.push(val.value);
+                        setCarData({ ...carData, documentNames: arr });
+                        return arr;
+                      });
+                    }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label id="driver_docs" htmlFor="driver_docs">
+                    All Documents
                   </label>
                   <input
                     type="file"
-                    name="driver_licence"
-                    id="driver_licence"
+                    name="driver_docs"
+                    id="driver_docs"
                     className="form-control"
                     placeholder="Enter driver licence"
+                    accept="application/pdf"
                     required
                   />
                 </div>
@@ -381,7 +408,6 @@ const AddCars = () => {
                     className="input-textarea"
                     name="driver_address"
                     placeholder="Enter your driver address here..."
-                    defaultValue={""}
                     value={carData.driverAddress}
                     onChange={(e) => {
                       setCarData({ ...carData, driverAddress: e.target.value });
@@ -453,11 +479,11 @@ const AddCars = () => {
                     Driver Email
                   </label>
                   <input
-                    type="enter driver's email"
+                    type="email"
                     name="email"
                     id="email"
                     className="form-control"
-                    placeholder="Enter your Email"
+                    placeholder="Enter Driver's Email"
                     required
                     value={carData.email}
                     onChange={(e) => {
@@ -470,8 +496,9 @@ const AddCars = () => {
               <div className="col-12">
                 <div className="form-group">
                   <button
-                    type="submit"
+                    type="button"
                     id="submit"
+                    onClick={() => addCarBtn()}
                     className="submit-button m-auto"
                   >
                     Submit

@@ -60,12 +60,24 @@ const TopNav = () => {
                   <span>Profile</span>
                 </div>
               </Link>
-              <Link to="/settings">
+              <Link to="/add-cars">
+                <div className="notification-item">
+                  <i className="bx bx-user"></i>
+                  <span>ADD DRIVER/CAR</span>
+                </div>
+              </Link>
+              <Link to="/add-place-price">
+                <div className="notification-item">
+                  <i className="bx bx-dollar"></i>
+                  <span>Set Place-Price</span>
+                </div>
+              </Link>
+              {/* <Link to="/settings">
                 <div className="notification-item">
                   <i className="bx bx-cog"></i>
                   <span>Settings</span>
                 </div>
-              </Link>
+              </Link> */}
               <Link
                 onClick={() =>
                   dispatch({ type: PURGE, key: "auth", logoutFun })

@@ -9,6 +9,7 @@ import { BASE_URL } from "../config";
 
 import LoadingView from "../components/LoadingView";
 import { loadBookingDataFun } from "../redux/actions";
+import Search from "../components/search/Search";
 
 // const filterOptions = [
 //   { value: "All Bookings", label: "All Bookings" },
@@ -48,15 +49,30 @@ const renderBody = (item, index) => (
     <td>
       {item.travelerInfo.travelerName} {item.travelerInfo.travelerMobile}
     </td>
-    <td>Someone</td>
-    <td className="actionTable">
-      <Link to="/driver-assign" title="Assign or Reassign Car">
+    <td>
+      {item.driver === undefined
+        ? "Not Assigned"
+        : `${item.driver?.driverName} (${item.driver?.driverMobile})`}
+    </td>
+    <td className="actionTable" style={{ display: "flex" }}>
+      <Link
+        to={`/driver-assign/${item.pnrno}`}
+        state={item}
+        title="Assign Driver"
+      >
         <i className="bx bx-user-plus"></i>
       </Link>{" "}
       |{" "}
-      <button title="Delete">
+      <Link
+        to={`/edit-booking/${item.pnrno}`}
+        state={item}
+        title="Edit Booking"
+      >
+        <i className="bx bx-edit-alt"></i>
+      </Link>
+      {/* <button title="Delete">
         <i className="bx bx-trash"></i>
-      </button>
+      </button> */}
     </td>
   </tr>
 );
@@ -69,21 +85,15 @@ const Bookings = () => {
   const [searchedData, setSearchedData] = useState(bookingsData);
 
   useEffect(() => {
-    let searched = bookingsData.filter((row) => {
-      // console.log(
-      //   searchedVal.toString().toLowerCase(),
-      //   row.pnrno.toString().toLowerCase(),
-      //   row.pnrno
-      //     .toString()
-      //     .toLowerCase()
-      //     .includes(searchedVal.toString().toLowerCase())
-      // );
-      return row.pnrno
-        .toString()
-        .toLowerCase()
-        .includes(searchedVal.toString().toLowerCase());
-    });
-    setSearchedData(searched);
+    if (bookingsData) {
+      let searched = bookingsData.filter((row) => {
+        return row.pnrno
+          .toString()
+          .toLowerCase()
+          .includes(searchedVal.toString().toLowerCase());
+      });
+      setSearchedData(searched);
+    }
   }, [searchedVal, bookingsData]);
   // console.log(searchedData);
 
@@ -135,17 +145,17 @@ const Bookings = () => {
                     }}
                   />
                 </div> */}
-                <div className="topnav__search">
-                  <input
-                    type="text"
-                    placeholder="Search here..."
-                    value={searchedVal}
-                    onChange={(e) => setSearchedVal(e.target.value)}
-                  />
-                  <i className="bx bx-search"></i>
+                <Search
+                  searchedVal={searchedVal}
+                  setSearchedVal={setSearchedVal}
+                />
+                <div className="topnav__action">
+                  <Link to="/add-booking" className="submit-button">
+                    ADD NEW BOOKING
+                  </Link>
                 </div>
               </div>
-              {!bookingsData ? (
+              {!searchedData ? (
                 <LoadingView />
               ) : (
                 <Table

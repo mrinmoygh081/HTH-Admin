@@ -334,3 +334,37 @@ label {
 .actionTable i.bx-trash:hover {
   background-color: #bb2e2e;
 }
+
+.actionTable i.bx-edit-alt {
+  color: #fff;
+  background-color: #d0a23f;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+}
+.actionTable i.bx-edit-alt:hover {
+  background-color: #97752d;
+}
+
+.multiForm {
+  padding: 20px;
+  background-color: rgb(206, 234, 251);
+  border-radius: 10px;
+  margin: 20px 0;
+}
+.multiFormAddon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.multiFormAddon .form-group {
+  width: 100%;
+}
+.multiFormAddNew {
+  text-align: right;
+}
+.multiFormAddNew button {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 4px;
+}

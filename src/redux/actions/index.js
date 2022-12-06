@@ -35,9 +35,27 @@ export const loadSingleBookingDataFun = (bookingData) => {
     bookingLoad: bookingData,
   };
 };
+export const availableCarsToAssign = (data) => {
+  return {
+    type: "AVAILABLECARS",
+    availableCars: data,
+  };
+};
+export const assignDriver = (data) => {
+  return {
+    type: "ASSIGNDRIVER",
+    assignDriver: data,
+  };
+};
 export const loadcarsDataFun = (carsData) => {
   return {
     type: "LOADCARSDATA",
     carsLoad: carsData,
+  };
+};
+export const getPlacePrice = (data) => {
+  return {
+    type: "GETPLACEPRICE",
+    placePriceData: data,
   };
 };
