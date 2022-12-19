@@ -5,6 +5,7 @@ import makeAnimated from "react-select/animated";
 import { BASE_URL } from "../config";
 import { useSelector } from "react-redux";
 import { postAPI } from "../apis";
+import { toast } from "react-toastify";
 
 const statesOptions = [
   { value: "arunachal pradesh", label: "Arunachal Pradesh" },
@@ -28,28 +29,89 @@ const AddCars = () => {
   const [carData, setCarData] = useState({
     driverPhoto:
       "ic-man-sitting-in-the-driving-seat-of-the-car-and-looking-back-.jpg?ver=6",
-    documentFile: "http://www.africau.edu/images/default/sample.pdf",
     startDate: "2021-06-19",
     endDate: "2021-07-19",
   });
-  // const [optionSelected, setOptionSelected] = useState(null);
+  const [imgFile, setImgFile] = useState(null);
+  const [imgStatus, setImgStatus] = useState(null);
 
   useEffect(() => {
     console.log(JSON.stringify(carData));
   }, [carData]);
 
   const addCarBtn = async () => {
-    let requestOptions = JSON.stringify(carData);
-
-    const url = `${BASE_URL}/admin/add-car-details`;
-
-    let res = await postAPI(requestOptions, url, loginToken);
-    console.log(res);
-    if (res?.status === 1) {
-      alert("Car added successfully.");
-    } else {
-      alert(res?.message);
+    if (imgStatus) {
+      let requestOptions = JSON.stringify(carData);
+      const url = `${BASE_URL}/admin/add-car-details`;
+      let res = await postAPI(requestOptions, url, loginToken);
+      console.log(res);
+      if (res?.status === 1) {
+        alert("Car added successfully.");
+      } else {
+        alert(res?.message);
+      }
     }
+  };
+
+  const generateLink = async () => {
+    let formdata = new FormData();
+    formdata.append("image", imgFile);
+
+    let requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    return await fetch(`${BASE_URL}/admin/image/124/pdf`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === 1) {
+          return result;
+        } else {
+          setImgStatus(false);
+          toast("Something went wrong. Please try again to upload the file.");
+        }
+      })
+      .catch((error) => error);
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (imgFile) {
+        let imgLink = await generateLink();
+        setCarData({ ...carData, documentFile: imgLink?.filePath });
+      }
+    })();
+  }, [imgFile]);
+
+  const validateImage = () => {
+    var image = document.getElementById("driver_docs").value;
+    if (image !== "") {
+      var checkimg = image.toLowerCase();
+      // validation of file extension
+      if (!checkimg.match(/(\.pdf)$/)) {
+        document.getElementById("driver_docs").focus();
+        toast("Wrong file selected. only pdf files are allowed.");
+        setImgStatus(false);
+        return false;
+      }
+      // var img = document.getElementById("image");s
+      // alert(img.files[0].size);
+      // validation according to file size
+      // if (img.files[0].size < 1048576) {
+      //   alert("Image size too short");
+      //   setImgStatus(false);
+      //   return false;
+      // }
+      setImgStatus(true);
+      return true;
+    }
+  };
+
+  const handleImageChange = (event) => {
+    setImgFile(event.target.files[0]);
+    validateImage();
   };
 
   return (
@@ -65,9 +127,7 @@ const AddCars = () => {
               <div className="col-12 col-md-6">
                 <h2 className="page-header">Car Details</h2>
                 <div className="form-group">
-                  <label id="car_name" htmlFor="car_name">
-                    Car Name
-                  </label>
+                  <label htmlFor="car_name">Car Name</label>
                   <input
                     type="text"
                     name="car_name"
@@ -82,9 +142,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="car_model" htmlFor="car_model">
-                    Car Model
-                  </label>
+                  <label htmlFor="car_model">Car Model</label>
                   <input
                     type="text"
                     name="car_model"
@@ -99,9 +157,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="car_number" htmlFor="car_number">
-                    Car Number
-                  </label>
+                  <label htmlFor="car_number">Car Number</label>
                   <input
                     type="text"
                     name="car_number"
@@ -120,9 +176,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="car_reg" htmlFor="car_reg">
-                    Registration Number
-                  </label>
+                  <label htmlFor="car_reg">Registration Number</label>
                   <input
                     type="text"
                     name="car_reg"
@@ -140,9 +194,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="car_reg_date" htmlFor="car_reg_date">
-                    Registration Expire Date
-                  </label>
+                  <label htmlFor="car_reg_date">Registration Expire Date</label>
                   <input
                     type="date"
                     name="car_reg_date"
@@ -160,9 +212,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="car_reg_date" htmlFor="car_reg_date">
-                    States Permit
-                  </label>
+                  <label htmlFor="car_reg_date">States Permit</label>
                   <CreatableSelect
                     options={statesOptions}
                     defaultValue={carData.permit}
@@ -265,13 +315,12 @@ const AddCars = () => {
                   </select>
                 </div> */}
               </div>
+
               {/* owner details */}
               <div className="col-12 col-md-6">
                 <h2 className="page-header">Owner Details</h2>
                 <div className="form-group">
-                  <label id="owner_name" htmlFor="owner_name">
-                    Owner Name
-                  </label>
+                  <label htmlFor="owner_name">Owner Name</label>
                   <input
                     type="text"
                     name="owner_name"
@@ -286,9 +335,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="owner_phone" htmlFor="owner_phone">
-                    Owner Phone
-                  </label>
+                  <label htmlFor="owner_phone">Owner Phone</label>
                   <input
                     type="number"
                     name="owner_phone"
@@ -303,9 +350,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="owner_bank_account" htmlFor="owner_bank_account">
-                    Owner Bank Account
-                  </label>
+                  <label htmlFor="owner_bank_account">Owner Bank Account</label>
                   <input
                     type="text"
                     name="owner_bank_account"
@@ -316,9 +361,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="owner_bank_ifsc" htmlFor="owner_bank_ifsc">
-                    Owner Bank IFSC Code
-                  </label>
+                  <label htmlFor="owner_bank_ifsc">Owner Bank IFSC Code</label>
                   <input
                     type="text"
                     name="owner_bank_ifsc"
@@ -329,7 +372,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <p>Owner Address</p>
+                  <label htmlFor="owner_address">Owner Address</label>
                   <textarea
                     id="owner_address"
                     className="input-textarea"
@@ -347,9 +390,7 @@ const AddCars = () => {
               <div className="col-12 col-md-6">
                 <h2 className="page-header">Driver Details</h2>
                 <div className="form-group">
-                  <label id="driver_name" htmlFor="driver_name">
-                    Driver Name
-                  </label>
+                  <label htmlFor="driver_name">Driver Name</label>
                   <input
                     type="text"
                     name="driver_name"
@@ -364,9 +405,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="car_reg_date" htmlFor="car_reg_date">
-                    Documents List
-                  </label>
+                  <label htmlFor="car_reg_date">Documents List</label>
                   <CreatableSelect
                     options={docsOptions}
                     defaultValue={carData.documentNames}
@@ -388,9 +427,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="driver_docs" htmlFor="driver_docs">
-                    All Documents
-                  </label>
+                  <label htmlFor="driver_docs">All Documents</label>
                   <input
                     type="file"
                     name="driver_docs"
@@ -398,11 +435,12 @@ const AddCars = () => {
                     className="form-control"
                     placeholder="Enter driver licence"
                     accept="application/pdf"
+                    onChange={handleImageChange}
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <p>Driver Address</p>
+                  <label htmlFor="driver_address">Driver Address</label>
                   <textarea
                     id="driver_address"
                     className="input-textarea"
@@ -421,9 +459,7 @@ const AddCars = () => {
                 <h2 className="page-header">Set Driver Login</h2>
 
                 <div className="form-group">
-                  <label id="driver_phone" htmlFor="driver_phone">
-                    Driver Phone
-                  </label>
+                  <label htmlFor="driver_phone">Driver Phone</label>
                   <input
                     type="number"
                     name="driver_phone"
@@ -438,9 +474,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="driver_pw" htmlFor="driver_pw">
-                    Set Password for Driver
-                  </label>
+                  <label htmlFor="driver_pw">Set Password for Driver</label>
                   <input
                     type="password"
                     name="driver_pw"
@@ -455,7 +489,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="driver_retype_pw" htmlFor="driver_retype_pw">
+                  <label htmlFor="driver_retype_pw">
                     Retype Password for Driver
                   </label>
                   <input
@@ -475,9 +509,7 @@ const AddCars = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label id="email-label" htmlFor="email">
-                    Driver Email
-                  </label>
+                  <label htmlFor="email">Driver Email</label>
                   <input
                     type="email"
                     name="email"

@@ -9,6 +9,7 @@ const CarsDetails = () => {
     <div>
       {state ? (
         <>
+          {console.log(state)}
           <h2 className="page-header">{state.registration[0].CarNumber}</h2>
           <div className="row">
             {/* Cars Details */}
@@ -143,11 +144,11 @@ const CarsDetails = () => {
               <div className="card">
                 <div className="card__header">
                   <h3>Driver Info</h3>
-                  <img
+                  {/* <img
                     src={state.driver.driverPhoto}
                     className="card__photo"
                     alt={`Driver Name: ${state.driver.driverName}`}
-                  />
+                  /> */}
                 </div>
                 <div className="card__body">
                   <table>
