@@ -59,3 +59,10 @@ export const getPlacePrice = (data) => {
     placePriceData: data,
   };
 };
+
+export const loadTourAgentsReq = (agentReqs) => {
+  return {
+    type: "LOADTOURAGENTREQ",
+    payload: agentReqs,
+  };
+};

@@ -6,6 +6,12 @@ import makeAnimated from "react-select/animated";
 // import { BASE_URL } from "../config";
 // import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import MapSearchInput from "../components/MapSearchInput";
+import { checkStateName } from "../utils/checkStateName";
+import { toast } from "react-toastify";
+import getLatLngLoc from "../utils/getLatLongLoc";
+// import { getDistance } from "../utils/getDistance";
+import GetDistanceDuration from "../components/GetDistanceDuration";
 
 const AddBooking = () => {
   //   const { loginToken } = useSelector((state) => state.authReducer);
@@ -20,6 +26,10 @@ const AddBooking = () => {
       Sstate: "",
       Estate: "",
       distance: "",
+      pLat: "",
+      pLng: "",
+      dLat: "",
+      dLng: "",
     },
   ]);
 
@@ -29,18 +39,30 @@ const AddBooking = () => {
     { value: "SUV", label: "SUV" },
   ];
 
-  const addNewJouney = () => {
+  const handleJourneyAdd = () => {
     setJourneyInfo([
       ...journeyInfo,
       {
         days: "",
-        start: "",
         end: "",
-        Sstate: "",
         Estate: "",
         distance: "",
       },
     ]);
+  };
+
+  const handleJourneyRemove = (index) => {
+    const list = [...journeyInfo];
+    list.splice(index, 1);
+    setJourneyInfo(list);
+  };
+
+  const handleInputChange = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...journeyInfo];
+    list[index][name] = value;
+    // console.log(list);
+    setJourneyInfo(list);
   };
 
   const addBookingFun = () => {
@@ -48,9 +70,35 @@ const AddBooking = () => {
     console.log(postingData);
   };
   useEffect(() => {
-    console.log(bookData);
-    console.log(travelerInfo);
-  }, [travelerInfo, bookData]);
+    console.log("bookData", bookData);
+    console.log("travelerInfo", travelerInfo);
+    console.log("journeyInfo", journeyInfo);
+  }, [travelerInfo, bookData, journeyInfo]);
+
+  // set origin and destination
+  const handleSelectedPlace = async (details, locTypes, index) => {
+    let address = details.value.description;
+    let stateName = checkStateName(address);
+    console.log("stateName", address);
+    console.log(JSON.stringify(details));
+    if (stateName && stateName.length === 0) {
+      toast(
+        "Currently, We're not providing our services on the selected state."
+      );
+    } else {
+      const list = [...journeyInfo];
+      const latLngObj = await getLatLngLoc(address);
+      list[index][locTypes] = address;
+      if (locTypes === "start") {
+        list[index]["Sstate"] = stateName[0];
+        console.log(latLngObj);
+      } else if (locTypes === "end") {
+        list[index]["Estate"] = stateName[0];
+      }
+
+      console.log(list);
+    }
+  };
 
   return (
     <>
@@ -280,36 +328,113 @@ const AddBooking = () => {
               <div className="col-12">
                 <h2 className="page-header">Journey Details</h2>
 
+                {/* <div className="multiForm">
+                  <div className="multiFormAddon">
+                    <div className="form-group">
+                      <label id="pickup" htmlFor="pickup">
+                        Pickup
+                      </label>
+                      <input
+                        type="text"
+                        name="pickup"
+                        id="pickup"
+                        className="form-control"
+                        placeholder="Enter pickup location"
+                        required
+                        value={journeyInfoFirst?.start}
+                        onChange={(e) =>
+                          setJourneyInfoFirst({
+                            ...journeyInfoFirst,
+                            start: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label id="DropOff" htmlFor="DropOff">
+                        DropOff
+                      </label>
+                      <input
+                        type="text"
+                        name="DropOff"
+                        id="DropOff"
+                        className="form-control"
+                        placeholder="Enter DropOff Location"
+                        required
+                        value={journeyInfoFirst?.end}
+                        onChange={(e) =>
+                          setJourneyInfoFirst({
+                            ...journeyInfoFirst,
+                            end: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label id="days" htmlFor="days">
+                        Booked For Days
+                      </label>
+                      <input
+                        type="number"
+                        name="days"
+                        id="days"
+                        className="form-control"
+                        placeholder="Enter number of days here..."
+                        required
+                        value={journeyInfoFirst?.days}
+                        onChange={(e) =>
+                          setJourneyInfoFirst({
+                            ...journeyInfoFirst,
+                            days: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div> */}
+
                 {journeyInfo &&
-                  journeyInfo.map((count, i) => (
-                    <div className="multiForm">
+                  journeyInfo.map((journey, index) => (
+                    <div key={index} className="multiForm">
+                      <GetDistanceDuration />
                       <div className="multiFormAddon">
                         <div className="form-group">
-                          <label id="pickup" htmlFor="pickup">
-                            Pickup
+                          <label id="end" htmlFor="end">
+                            Pickup Location
                           </label>
-                          <input
-                            type="text"
-                            name="pickup"
-                            id="pickup"
-                            className="form-control"
-                            placeholder="Enter pickup location"
-                            required
+                          <MapSearchInput
+                            label="Search Your Dropoff Location"
+                            onPlaceSelected={(details) => {
+                              handleSelectedPlace(details, "start", index);
+                            }}
                           />
                         </div>
                         <div className="form-group">
-                          <label id="DropOff" htmlFor="DropOff">
+                          <label id="end" htmlFor="end">
                             DropOff
+                          </label>
+                          <MapSearchInput
+                            label="Search Your Dropoff Location"
+                            onPlaceSelected={(details) => {
+                              handleSelectedPlace(details, "end", index);
+                            }}
+                          />
+                        </div>
+                        {/* <div className="form-group">
+                          <label id="end" htmlFor="end">
+                            Next DropOff
                           </label>
                           <input
                             type="text"
-                            name="DropOff"
-                            id="DropOff"
+                            name="end"
+                            id="end"
                             className="form-control"
                             placeholder="Enter DropOff Location"
                             required
+                            value={journey?.start}
+                            onChange={(e) => handleInputChange(e, index)}
                           />
-                        </div>
+                        </div> */}
                         <div className="form-group">
                           <label id="days" htmlFor="days">
                             Booked For Days
@@ -321,21 +446,21 @@ const AddBooking = () => {
                             className="form-control"
                             placeholder="Enter number of days here..."
                             required
-                            value={travelerInfo?.travelerMobile}
-                            onChange={(e) =>
-                              setTravelerInfo({
-                                ...travelerInfo,
-                                travelerMobile: e.target.value,
-                              })
-                            }
+                            value={journey.days}
+                            onChange={(e) => handleInputChange(e, index)}
                           />
                         </div>
+                      </div>
+                      <div className="remove_item">
+                        <button onClick={() => handleJourneyRemove(index)}>
+                          <i className="bx bx-x"></i>
+                        </button>
                       </div>
                     </div>
                   ))}
                 <div className="multiFormAddNew">
-                  <button type="button" onClick={() => addNewJouney()}>
-                    Add New
+                  <button type="button" onClick={() => handleJourneyAdd()}>
+                    Add Next DropOff
                   </button>
                 </div>
               </div>

@@ -22,10 +22,9 @@ const renderHead = (item, index) => <th key={index}>{item}</th>;
 
 const renderBody = (item, index) => (
   <tr key={index}>
-    {console.log(item)}
     <td>
       <Link to={`/carsDetails`} state={item} className="under_hover">
-        {item.registration[0].CarNumber}
+        {item?.registration[0]?.CarNumber}
       </Link>
     </td>
     <td>{item.carName}</td>
@@ -33,7 +32,7 @@ const renderBody = (item, index) => (
     <td>{item.permit.map((it) => `${it}, `)}</td>
     <td>{item.availability ? "Not available" : "Available"}</td>
     <td>
-      {item.driver.driverName} {item.driver.driverMobile}
+      {item?.driver?.driverName} {item?.driver?.driverMobile}
     </td>
     <td className="actionTable">
       <button>

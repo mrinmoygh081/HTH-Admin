@@ -351,6 +351,7 @@ label {
   background-color: rgb(206, 234, 251);
   border-radius: 10px;
   margin: 20px 0;
+  position: relative;
 }
 .multiFormAddon {
   display: flex;
@@ -367,4 +368,23 @@ label {
   margin-left: auto;
   padding: 3px 10px;
   border-radius: 4px;
+}
+.multiForm .remove_item {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+.multiForm .remove_item button {
+  background-color: transparent;
+}
+.multiForm .remove_item button i {
+  color: red;
+  padding: 5px 6px;
+  font-size: 20px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+.multiForm .remove_item button i:hover {
+  background-color: red;
+  color: #fff;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import TopNav from "../topbar/TopNav";
@@ -72,6 +72,7 @@ const Layout = () => {
                   path="/add-place-price-form"
                   element={<AddPlacePriceFrom />}
                 />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
           </div>

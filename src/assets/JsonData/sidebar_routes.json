@@ -10,6 +10,16 @@
         "icon": "bx bx-car"
     },
     {
+        "display_name": "Tour Agents",
+        "route": "/agents",
+        "icon": "bx bx-user"
+    },
+    {
+        "display_name": "Drivers",
+        "route": "/drivers",
+        "icon": "bx bx-user"
+    },
+    {
         "display_name": "Cars",
         "route": "/cars",
         "icon": "bx bx-car"
